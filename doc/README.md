@@ -18,7 +18,7 @@
 
 **The answers to all above questions are revealed in here.**
 
-Full Analysis is in *[Project_1_Happy_Moments_.Rmd]*(/doc)
+Full Analysis is in [Project_1_Happy_Moments_.Rmd](/doc/Project_1_Happy_Moments_.Rmd)
 
 
 ******
