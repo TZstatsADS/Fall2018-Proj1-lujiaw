@@ -1,5 +1,6 @@
 ---
 title: "Happy Moments"
+author: Lujia Wang (lw2772)
 output:
   html_document: default
   html_notebook: default
@@ -26,7 +27,6 @@ library(scales)
 library(wordcloud2)
 library(gridExtra)
 library(ngram)
-library(plotly)
 ```
 
 
@@ -79,7 +79,7 @@ Most happy moments is only in one sentence. Simple but powerful, isn't it?
 
 However, A few happy memory is a long story and we need more words to express our feelings. Young people, especially male around age of 25, like to write extra long paragraphs describing their happy moments.
 
-(There are some outliers in the data set (someone copied a story and had multiple same entries). So we removed these answers from the data set.)
+*There are some outliers in the data set. Someone copied a story and had multiple same entries. I have removed these answers from the data set.*
 
 ```{r,warning=FALSE, message=FALSE,echo=FALSE}
 # remove unrelated answers
@@ -137,15 +137,22 @@ ggplot(one.line, aes(x=predicted_category,fill=predicted_category)) +
 
 A lot of happy time happen between friends, family, wife, husband, daughter, son and ourselves.
 
-```{r,warning=FALSE,message=FALSE,echo=FALSE,fig.height=2}
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
 bagOfWords <-  one.line %>% unnest_tokens(word, text)
 word_count <- bagOfWords%>% count(word, sort = TRUE)
-wordcloud2(word_count,ellipticity = 0.1,size=0.6,color = "random-light")
+word_count %>% top_n(20, n) %>%
+ggplot(aes(x=reorder(word,n),y=n))+
+  geom_bar(stat = "identity",fill="skyblue")+
+  theme_minimal() + coord_flip() +
+  labs(title="Most frequent words in HappyDB",
+       y="frequency",x="words") +
+  theme(axis.text.x = element_blank(),
+        panel.grid = element_blank(),
+        plot.title=element_text(size=15, face="bold"))
+#wordcloud2(word_count,ellipticity = 0.1,size=0.6,color = "random-light")
 ```
 
-* Some questions...
-
-Words are ordered by their fruencies.
+Now, I want oanalyze frequencies of words at different positions in a sentence.
 
   + Happiness begins with...?
 
@@ -170,12 +177,12 @@ first_word_count <- sense %>%filter(tokenOffset==1) %>% count(lowercaseLemma, so
 p1 <- ggplot(first_word_count[1:20,], aes(x=reorder(lowercaseLemma,n),y=n))+
   geom_bar(stat = "identity",fill="Orange")+
   theme_minimal() + coord_flip() +
-  theme(axis.text.x=element_blank(),
-        axis.title.x=element_blank(),
-        axis.title.y=element_blank(),
+  labs(title="Happiness begins with...?",
+       y="frequency",x="first words in sentences") +
+  theme(axis.text.x = element_blank(),
         panel.grid = element_blank(),
-        plot.title=element_text(size=10, face="bold")) +
-  labs(title="Happiness begins with...?")
+        plot.title=element_text(size=10, face="bold"))
+  
 ```
 
 ```{r Who makes us happy,warning=FALSE,message=FALSE,echo=FALSE}
@@ -186,12 +193,11 @@ p2 <- ggplot(person_word_count[1:20,],
        aes(x=reorder(lowercaseLemma,n),y=n))+
   geom_bar(stat = "identity", fill="chocolate")+
   theme_minimal() + coord_flip() +
-  theme(axis.text.x=element_blank(),
-        axis.title.x=element_blank(),
-        axis.title.y=element_blank(),
+  labs(title="Who makes us happy?",y="frequency",x="words of people") +
+  theme(axis.text.x = element_blank(),
         panel.grid = element_blank(),
-        plot.title=element_text(size=10, face="bold")) +
-  labs(title="Who makes us happy?")
+        plot.title=element_text(size=10, face="bold"))
+  
 ```
 
 ```{r What thing makes us happy,warning=FALSE,message=FALSE,echo=FALSE}
@@ -202,13 +208,12 @@ p3 <- ggplot(noun_word_count[1:20,],
        aes(x=reorder(lowercaseLemma,n),y=n))+
   geom_bar(stat = "identity",fill="skyblue")+
   theme_minimal() + coord_flip() +
-  theme(axis.text.x=element_blank(),
-        axis.title.x=element_blank(),
-        axis.title.y=element_blank(),
+  labs(title="What things make us happy?",
+       y="frequency",x="word of things") +
+  theme(axis.text.x = element_blank(),
         panel.grid=element_blank(),
-        plot.title=element_text(size=10, face = "bold")) +
-  labs(title="What thing makes us happy?")
-
+        plot.title=element_text(size=10, face = "bold"))
+  
 grid.arrange(p1, p2, p3, ncol=3)
 ```
 
@@ -352,7 +357,7 @@ bigram_counts %>%
 
 Here I count top ten words preceded by word *favorite/favourite*. Interestingly, SEVEN of them, including the top ones, are about eating. Those words are *restaurant*, *food*, *meal*, *dish*, *snack*, *sweet*, *dinner*. Apparently, Eating is so happy! 
 
-# Dinner, my favorite eating time!
+## Dinner, my favorite eating time!
 
 Of all three meals, we love dinners, expecially with our beloved friends and family. If you are struggling or frustrated about something, having a decent dinner may be the quikest way to get you happy.
 
@@ -364,24 +369,28 @@ food.df <- bagOfWords %>%
   left_join(one.line, by=c("id"="id"))
 bagOfWords_food <- food.df %>% unnest_tokens(word, text)
 word_count_food <- bagOfWords_food %>% count(word, sort = TRUE)
-wordcloud_food <- wordcloud2(word_count_food,
-                             ellipticity = 0.1,size=0.6,color="random-light")
-wordcloud_food
+wordcloud2(word_count_food,ellipticity = 0.1,size=0.6)
 ```
 
 
 
 ## Yummy! I am so happy when I am eating/drinking ...
 
-Coffee and Pizza are the secret food/drink to happiness. Sweet dessert like ice cream, chocolate, cake can also give a sense of sweetness to our lives.
+Here's most frequent words about food and drinks in the set. **Coffee** and **Pizza** are the best food/drink to cheer one up. Sweet dessert like ice cream, chocolate, cake and candy can also give a sense of sweetness to our lives. 
+
+Next time, if you are unhappy, maybe you are just hungry. Order a pizza and invite your friend to share it with you, everything will be okay :) 
+
+I also noted that among these food, the only one that is more authentic is Sushi. Maybe that's reason why sushi is so polular worldwide.
 
 
 ```{r,echo=FALSE,message=FALSE,warning=FALSE}
+# join happy moments on food topic with the sense data
 sense.food <- food.df %>% select("hmid") %>% left_join(sense,by="hmid")
 food_word_count <- sense %>%
-  filter(supersenseLabel=="n.food")%>%
+  filter(supersenseLabel=="n.food"&
+           (!lowercaseLemma%in%c("food","dinner","lunch","breakfast","drink")))%>%
   count(lowercaseLemma, sort = TRUE)
-# Top
+# Top 20 words about food
 ggplot(food_word_count[1:20,], 
        aes(x=reorder(lowercaseLemma,n),y=n))+
   geom_bar(stat = "identity",fill="Orange")+
@@ -391,7 +400,17 @@ ggplot(food_word_count[1:20,],
         axis.title.y=element_blank(),
         panel.grid = element_blank(),
         plot.title=element_text(size=15, face = "bold")) +
-  labs(title="What food or drinks makes you happy?")
+  labs(title="What food or drinks makes you happy?",
+       x="food/drinks",y="frequency")
 ```
 
+## Future Analysis
+
+Some future anaysis I can think of right now is 
+
++ topic modeling, categorized happy moments into topics like exercise, shopping, job, eating, pets, video games...
+
++ Differences between happy memories reflected from short term and long term.
+
++ Based on different segmentatio of people, analyze what activities they like to do.
 
