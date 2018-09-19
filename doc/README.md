@@ -2,7 +2,7 @@
 
 ### Happy Moments
 
-![](../figs/wordcloud.png)
+![wrodcloud](../figs/wordcloud.png)
 
 **In this project, I focus on those happy memories written in just one line. These moments are simple, but powerful.** 
 
@@ -18,9 +18,11 @@
 
 **The answers to all above questions are revealed in here.**
 
+Full Analysis is in *[Project_1_Happy_Moments_.Rmd]*(/doc)
+
 
 ******
-<div style="text-align: right"> Be happy for this moment. This moment is your life. -- Omar Khayyam </div> 
+* Be happy for this moment. This moment is your life. -- Omar Khayyam * 
 
 
 
