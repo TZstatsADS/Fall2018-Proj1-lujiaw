@@ -18,11 +18,11 @@
 
 **The answers to all above questions are revealed in here.**
 
-Full Analysis is in [Project_1_Happy_Moments_.Rmd](/doc/Project_1_Happy_Moments.Rmd)
+Full Analysis is in [Project_1_Happy_Moments.Rmd](/doc/Project_1_Happy_Moments.Rmd)
 
 
 ******
-* Be happy for this moment. This moment is your life. -- Omar Khayyam * 
+*Be happy for this moment. This moment is your life.* -- *Omar Khayyam* 
 
 
 

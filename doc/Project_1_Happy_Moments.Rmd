@@ -3,7 +3,6 @@ title: "Happy Moments"
 author: Lujia Wang (lw2772)
 output:
   html_document: default
-  html_notebook: default
 ---
 
 ```{r, warning=FALSE, message=FALSE,echo=FALSE}
@@ -221,7 +220,7 @@ grid.arrange(p1, p2, p3, ncol=3)
 
 ## Sentiment Analysis
 
-* By deomographic
+##### Sentiment score of different types of people
 
 I calculated the average sentiment score by their gender, marital and parenthood status. Surprisingly, single dads have the highest postivity score. Another interesting fact is that for female, married women have similar or slight higher positivity score with unmarried women. However, the scenerio is opposite for male. Perhaps it is because women enjoy marriage more than men.
 
@@ -247,7 +246,7 @@ ggplot(sentiments_by_demo, aes(x=marital,y=score,fill=parenthood)) +
 ```
 
 
-* By category
+##### Sentiment score of each category
 
 I also calculate the average sentiment score of different categories. Though not so much entries of happy moments are about nature, nature has the highest positivity score among all categories. Because there are more **nice** words when describing the nature, such as beautiful, warm and so on. We will see that in a moment.
 
@@ -273,7 +272,9 @@ sentiments_by_category %>%
        title="Average Sentiment Score by Category")
 ```
 
-* What words have the most effect on sentiment scores overall?
+##### What words have the most effect on sentiment scores overall?
+
+Here I analyze the contribution (sentiment score weighted by occurrences) of each words and select the top 20 words.
 
 ```{r,message=FALSE,warning=FALSE,echo=FALSE}
 sentiments_by_word <- bagOfWords %>%
@@ -294,7 +295,9 @@ sentiments_by_word %>%
   labs(title="Words with most effect on sentiment score")
 ```
 
-* What word have the most effect on sentiment scores within each category
+##### What word havs the most effect on sentiment scores within each category
+
+After analyzing the overall contribution of each word, now I evaluate their contribution within each category. **love** appears in almost every category, and it makes sense.
 
 ```{r,message=FALSE,warning=FALSE,echo=FALSE,fig.height=10}
 top_sentiment_words <- words_by_category %>%
@@ -321,7 +324,9 @@ top_sentiment_words %>%
 
 ## Bigram Analysis
 
-* What is your favorite thing?
+### What is my favorite?
+
+Here I count top ten words preceded by word *favorite/favourite*. Interestingly, SEVEN of them, including the top ones, are about eating. Those words are *restaurant*, *food*, *meal*, *dish*, *snack*, *sweet*, *dinner*. Apparently, Eating is so happy! 
 
 ```{r,echo=FALSE}
 #bigram analysis
@@ -355,11 +360,11 @@ bigram_counts %>%
   coord_flip()
 ```
 
-Here I count top ten words preceded by word *favorite/favourite*. Interestingly, SEVEN of them, including the top ones, are about eating. Those words are *restaurant*, *food*, *meal*, *dish*, *snack*, *sweet*, *dinner*. Apparently, Eating is so happy! 
 
-## Dinner, my favorite eating time!
 
-Of all three meals, we love dinners, expecially with our beloved friends and family. If you are struggling or frustrated about something, having a decent dinner may be the quikest way to get you happy.
+### Dinner, my favorite eating time!
+
+Of all three meals, we love dinners, expecially with our beloved friends and family. If you are struggling or frustrated about something, having a decent dinner may be the quickest way to get you happy.
 
 ```{r,message=FALSE,warning=FALSE,echo=FALSE,fig.height=2}
 food.dict <- read_csv('https://raw.githubusercontent.com/rit-public/HappyDB/master/happydb/data/topic_dict/food-dict.csv', col_names = FALSE)
@@ -374,9 +379,9 @@ wordcloud2(word_count_food,ellipticity = 0.1,size=0.6)
 
 
 
-## Yummy! I am so happy when I am eating/drinking ...
+### Yummy! I am so happy when I am eating/drinking ...
 
-Here's most frequent words about food and drinks in the set. **Coffee** and **Pizza** are the best food/drink to cheer one up. Sweet dessert like ice cream, chocolate, cake and candy can also give a sense of sweetness to our lives. 
+Here are most frequent words about food and drinks in the set. **Coffee** and **Pizza** are the best food/drink to cheer one up. Sweet dessert like ice cream, chocolate, cake and candy can also give a sense of sweetness to our lives. 
 
 Next time, if you are unhappy, maybe you are just hungry. Order a pizza and invite your friend to share it with you, everything will be okay :) 
 
