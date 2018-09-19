@@ -1,8 +1,8 @@
 ---
 title: "Happy Moments"
 output:
-  html_notebook: default
   html_document: default
+  html_notebook: default
 ---
 
 ```{r, warning=FALSE, message=FALSE,echo=FALSE}
@@ -73,11 +73,15 @@ hm_data <- hm_data %>%
 
 ```
 
-## How many sentences do you use to describe a happy moment?
+### How many sentences do you use to describe a happy moment?
 
-There are some outliers in the data set (someone copied a story and had multiple same entries). So we removed these answers from the data set.
+Most happy moments is only in one sentence. Simple but powerful, isn't it?
 
-```{r}
+However, A few happy memory is a long story and we need more words to express our feelings. Young people, especially male around age of 25, like to write extra long paragraphs describing their happy moments.
+
+(There are some outliers in the data set (someone copied a story and had multiple same entries). So we removed these answers from the data set.)
+
+```{r,warning=FALSE, message=FALSE,echo=FALSE}
 # remove unrelated answers
 hm_data <- hm_data%>%filter(wid!=455&wid!=508)
 # calculated number of sentences distribution by gender
@@ -89,29 +93,32 @@ num_sentence_dist$num_sentence <- factor(num_sentence_dist$num_sentence,levels =
 p1 <- ggplot(hm_data, aes(x=age, y=num_sentence,color=gender)) +
   geom_point(size=1,alpha=0.7) +
   labs(y='number of sentences',title="Number of sentences vs Age\n") +
-  theme_bw()
+  theme_bw() +
+  theme(plot.title=element_text(size=10, face="bold"))
 # number of sentence distribution by gender stacked bar plot
 p2 <- ggplot(num_sentence_dist, aes(x=gender, y=n, fill=num_sentence))+
   geom_bar(width = 0.7, stat = "identity")+
   scale_fill_brewer(palette="GnBu") +
   labs(fill='number of \nsentences',
-       title="Number of sentences \ndistribution by gender") +
+       title="Distribution of number \nof sentences") +
   theme_bw() +
-  labs(y="")
-grid.arrange(p1, p2, nrow = 2, ncol = 3, layout_matrix=rbind(c(1,1,2),c(1,1,2)))
+  theme(axis.title.x=element_blank(),
+        axis.title.y=element_blank(),
+        plot.title=element_text(size=10, face="bold"))
 
+grid.arrange(p1, p2, nrow = 2, ncol = 3, layout_matrix=rbind(c(1,1,2),c(1,1,2)))
 ```
 
-Most happy moments is only in one sentence. Simple but powerful, isn't it?
-
-However, A few happy memory is a long story and we need more words to express our feelings. Young people, especially male around age of 25, like to write extra long paragraphs describing their happy moments.
-
+***
 
 # Happiness in ONE line!
 
 In order to avoid randomness, I focus on those moments written in one line.
 
-## What are they about?
+### What are they about?
+
+Achievements and affection are two major sources of our happiness. A possible guess is that achievements are from our jobs and work, and feelings of affection are from our friends and family.
+
 ```{r, warning=FALSE,message=FALSE,echo=FALSE}
 #filter happy moments in only one sentence.
 one.line <- hm_data %>% filter(num_sentence==1)
@@ -123,22 +130,35 @@ ggplot(one.line, aes(x=predicted_category,fill=predicted_category)) +
   theme_minimal() +
   scale_fill_brewer(palette="Spectral") +
   theme(axis.text = element_blank(),
-        axis.title = element_blank()) +
-  labs(title='One-line happy moments by categories',fill="category")
-```
-
-Achievements and affection are two major sources of our happiness. A possible guess is that achievements are from our jobs and work, and feelings of affection are from our friends and family.
-
-* Word Cloud
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
-bagOfWords <-  one.line %>% unnest_tokens(word, text)
-word_count <- bagOfWords%>% count(word, sort = TRUE)
-wordcloud2(word_count,ellipticity = 0.1,size=0.6,fontFamily = 'Impact',color = "random-light")
+        axis.title = element_blank(),
+        plot.title=element_text(size=15, face="bold")) +
+  labs(title='One-line happy moments by category',fill="category")
 ```
 
 A lot of happy time happen between friends, family, wife, husband, daughter, son and ourselves.
 
+```{r,warning=FALSE,message=FALSE,echo=FALSE,fig.height=2}
+bagOfWords <-  one.line %>% unnest_tokens(word, text)
+word_count <- bagOfWords%>% count(word, sort = TRUE)
+wordcloud2(word_count,ellipticity = 0.1,size=0.6,color = "random-light")
+```
+
 * Some questions...
+
+Words are ordered by their fruencies.
+
+  + Happiness begins with...?
+
+Obviously, most happy moments focus on ourselves and things happen on us.
+
+  + Who makes us happy?
+
+Naturally, we can always find happiness with our family and friends. I also notice an interesting fact is that son/daughter appears more often than mother/father/mom/dad. Animals, including human, care about their children much more than their parents. This rule is reflected here.
+
+  + What things makes us happy?
+
+Some happiness are from work like a job promotion, a salary raise. Some happiness are just small things like a tasty dinner,a good movie, or a book. Some happiness are from our pets. Dog is the most beloved pet for Americans.
+
 ```{r Happiness begins with,warning=FALSE,message=FALSE,echo=FALSE}
 sense <- one.line %>% select("hmid","predicted_category") %>% inner_join(sense_data, by="hmid")
 sense$supersenseLabel[sense$lowercaseLemma=="family"] <- "n.person"
@@ -154,11 +174,9 @@ p1 <- ggplot(first_word_count[1:20,], aes(x=reorder(lowercaseLemma,n),y=n))+
         axis.title.x=element_blank(),
         axis.title.y=element_blank(),
         panel.grid = element_blank(),
-        plot.title=element_text(size=8, face="bold")) +
+        plot.title=element_text(size=10, face="bold")) +
   labs(title="Happiness begins with...?")
 ```
-
-
 
 ```{r Who makes us happy,warning=FALSE,message=FALSE,echo=FALSE}
 person_word_count <- sense %>%
@@ -172,12 +190,9 @@ p2 <- ggplot(person_word_count[1:20,],
         axis.title.x=element_blank(),
         axis.title.y=element_blank(),
         panel.grid = element_blank(),
-        plot.title=element_text(size=8, face="bold")) +
+        plot.title=element_text(size=10, face="bold")) +
   labs(title="Who makes us happy?")
 ```
-
-
-
 
 ```{r What thing makes us happy,warning=FALSE,message=FALSE,echo=FALSE}
 noun_word_count <- sense %>%
@@ -191,30 +206,22 @@ p3 <- ggplot(noun_word_count[1:20,],
         axis.title.x=element_blank(),
         axis.title.y=element_blank(),
         panel.grid=element_blank(),
-        plot.title=element_text(size=8, face = "bold")) +
+        plot.title=element_text(size=10, face = "bold")) +
   labs(title="What thing makes us happy?")
 
 grid.arrange(p1, p2, p3, ncol=3)
 ```
 
-Words are ordered by their fruencies.
-
-  * Happiness begins with...?
-
-Obviously, most happy moments focus on ourselves and things happen on us.
-
-  * Who makes us happy?
-
-Naturally, we can always find happiness with our family and friends. I also notice an interesting fact is that son/daughter appears more often than mother/father/mom/dad. Animals, including human, care about their children much more than their parents. This rule is reflected here.
-
-  * What things makes us happy?
-
-Some happiness are from work like a job promotion, a salary raise. Some happiness are just small things like a tasty dinner,a good movie, or a book. Some happiness are from our pets. Dog is the most beloved pet for Americans.
-
+***
 
 ## Sentiment Analysis
 
 * By deomographic
+
+I calculated the average sentiment score by their gender, marital and parenthood status. Surprisingly, single dads have the highest postivity score. Another interesting fact is that for female, married women have similar or slight higher positivity score with unmarried women. However, the scenerio is opposite for male. Perhaps it is because women enjoy marriage more than men.
+
+Having a child also infuences the positivity score of male and female in different ways. A married women who has kids has a lower score than a married women who does't have kids. Men who have kids have a positivity score higher than those who don't have kids.
+
 ```{r,message=FALSE,warning=FALSE,echo=FALSE}
 words_by_demo <- bagOfWords %>%
   count(gender,marital,parenthood, word, sort = TRUE) %>%
@@ -228,15 +235,18 @@ ggplot(sentiments_by_demo, aes(x=marital,y=score,fill=parenthood)) +
   geom_col(position = "dodge") +
   facet_wrap(~gender) +
   theme_bw() +
-  scale_fill_brewer(palette="Blues")
+  scale_fill_brewer(palette="Blues") +
+  theme(plot.title=element_text(size=15, face = "bold")) +
+  labs(title="Sentiment Score by Gender")
 
 ```
 
-Surprisingly, single dads have the highest postivity score. Another interesting fact is that for female, married women have similar or slight higher positivity score with unmarried women. However, the scenerio is opposite for male. Perhaps it is because women enjoy marriage more than men.
-
-Having a child also infuences the positivity score of male and female in different ways. A married women who has kids has a lower score than a married women who does't have kids. Men who have kids have a positivity score higher than those who don't have kids.
 
 * By category
+
+I also calculate the average sentiment score of different categories. Though not so much entries of happy moments are about nature, nature has the highest positivity score among all categories. Because there are more **nice** words when describing the nature, such as beautiful, warm and so on. We will see that in a moment.
+
+
 ```{r,message=FALSE,warning=FALSE,echo=FALSE}
 words_by_category <- bagOfWords %>%
   count(predicted_category, word, sort = TRUE) %>%
@@ -253,15 +263,12 @@ sentiments_by_category %>%
   geom_col(show.legend = FALSE,fill="lightblue") +
   coord_flip() +
   theme_bw() +
+  theme(plot.title=element_text(size=15, face = "bold")) +
   labs(y="Average sentiment score",
        title="Average Sentiment Score by Category")
 ```
 
-Though not so much moments are about nature, it has the highest positivity score among all categories. Because there are more **nice** words when describing the nature, such as beautiful, warm and so on. We will see that in a moment.
-
-* By word
-
-What words have the most effect on sentiment scores overall?
+* What words have the most effect on sentiment scores overall?
 
 ```{r,message=FALSE,warning=FALSE,echo=FALSE}
 sentiments_by_word <- bagOfWords %>%
@@ -277,12 +284,14 @@ sentiments_by_word %>%
   scale_fill_brewer() +
   geom_col(show.legend = FALSE) +
   coord_flip() +
-  theme_bw()
+  theme_bw() +
+  theme(plot.title=element_text(size=15, face = "bold"))+
+  labs(title="Words with most effect on sentiment score")
 ```
 
 * What word have the most effect on sentiment scores within each category
 
-```{r,message=FALSE,warning=FALSE,echo=FALSE}
+```{r,message=FALSE,warning=FALSE,echo=FALSE,fig.height=10}
 top_sentiment_words <- words_by_category %>%
   inner_join(get_sentiments("afinn"), by = "word") %>%
   mutate(contribution = score * n / sum(n))
@@ -298,11 +307,17 @@ top_sentiment_words %>%
   facet_wrap(~ predicted_category, scales = "free", nrow = 4) +
   coord_flip() +
   theme_bw() +
+  theme(plot.title=element_text(size=15, face = "bold")) +
   labs(title = "Top five words with highest contribution in each category")
   
 ```
 
+***
+
 ## Bigram Analysis
+
+* What is your favorite thing?
+
 ```{r,echo=FALSE}
 #bigram analysis
 bigrams <- one.line %>% filter(count!=1) %>%
@@ -327,16 +342,21 @@ bigram_counts %>%
   geom_col(show.legend = FALSE,fill="orange") +
   facet_wrap(~ word1, scales = "free", nrow = 1) +
   scale_x_discrete(labels = function(x) gsub("__.+$", "", x)) +
-  xlab("Most frequent words preceded by word favorite") +
-  ylab("Number of occurrences") +
+  labs(x="Words preceded by favorite",
+       y="Number of occurrences",
+       title="My favorite is ...") +
   theme_bw() +
+  theme(plot.title=element_text(size=15, face = "bold")) +
   coord_flip()
 ```
 
-Here we count top ten words preceded by word *favorite/favourite*. Interestingly, SEVEN of them, including the top ones, are about eating. Those words are *restaurant*, *food*, *meal*, *dish*, *snack*, *sweet*, *dinner*. Apparently, Eating is so happy! 
+Here I count top ten words preceded by word *favorite/favourite*. Interestingly, SEVEN of them, including the top ones, are about eating. Those words are *restaurant*, *food*, *meal*, *dish*, *snack*, *sweet*, *dinner*. Apparently, Eating is so happy! 
 
 # Dinner, my favorite eating time!
-```{r,message=FALSE,warning=FALSE,echo=FALSE}
+
+Of all three meals, we love dinners, expecially with our beloved friends and family. If you are struggling or frustrated about something, having a decent dinner may be the quikest way to get you happy.
+
+```{r,message=FALSE,warning=FALSE,echo=FALSE,fig.height=2}
 food.dict <- read_csv('https://raw.githubusercontent.com/rit-public/HappyDB/master/happydb/data/topic_dict/food-dict.csv', col_names = FALSE)
 food <- as.vector(food.dict$X1)
 food.df <- bagOfWords %>% 
@@ -344,13 +364,18 @@ food.df <- bagOfWords %>%
   left_join(one.line, by=c("id"="id"))
 bagOfWords_food <- food.df %>% unnest_tokens(word, text)
 word_count_food <- bagOfWords_food %>% count(word, sort = TRUE)
-wordcloud2(word_count_food,ellipticity = 0.1,
-           size=0.6,color ="random-light")
+wordcloud_food <- wordcloud2(word_count_food,
+                             ellipticity = 0.1,size=0.6,color="random-light")
+wordcloud_food
 ```
 
-Of all three meals, we love dinners, expecially with our beloved friends and family. If you are struggling or frustrated about something, having a decent dinner may be the quikest way to get you happy.
+
 
 ## Yummy! I am so happy when I am eating/drinking ...
+
+Coffee and Pizza are the secret food/drink to happiness. Sweet dessert like ice cream, chocolate, cake can also give a sense of sweetness to our lives.
+
+
 ```{r,echo=FALSE,message=FALSE,warning=FALSE}
 sense.food <- food.df %>% select("hmid") %>% left_join(sense,by="hmid")
 food_word_count <- sense %>%
@@ -359,15 +384,14 @@ food_word_count <- sense %>%
 # Top
 ggplot(food_word_count[1:20,], 
        aes(x=reorder(lowercaseLemma,n),y=n))+
-  geom_bar(stat = "identity",fill="coral")+
+  geom_bar(stat = "identity",fill="Orange")+
   theme_minimal() + coord_flip() +
   theme(axis.text.x=element_blank(),
         axis.title.x=element_blank(),
         axis.title.y=element_blank(),
         panel.grid = element_blank(),
-        plot.title=element_text(size=12, face = "bold")) +
+        plot.title=element_text(size=15, face = "bold")) +
   labs(title="What food or drinks makes you happy?")
 ```
 
-Coffee and Pizza are the secret food/drink to happiness. Sweet dessert like ice cream, chocolate, cake can also give a sense of sweetness to our lives.
 
