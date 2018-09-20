@@ -78,9 +78,10 @@ Most happy moments is only in one sentence. Simple but powerful, isn't it?
 
 However, A few happy memory is a long story and we need more words to express our feelings. Young people, especially male around age of 25, like to write extra long paragraphs describing their happy moments.
 
-*There are some outliers in the data set. Someone copied a story and had multiple same entries. I have removed these answers from the data set.*
+*
 
 ```{r,warning=FALSE, message=FALSE,echo=FALSE}
+# There are some outliers in the data set. Someone copied a story and had multiple same entries. remove these answers from the data set.
 # remove unrelated answers
 hm_data <- hm_data%>%filter(wid!=455&wid!=508)
 # calculated number of sentences distribution by gender
@@ -112,7 +113,7 @@ grid.arrange(p1, p2, nrow = 2, ncol = 3, layout_matrix=rbind(c(1,1,2),c(1,1,2)))
 
 # Happiness in ONE line!
 
-In order to avoid randomness, I focus on those moments written in one line.
+I focus on happy moments written in one line. They are just simple things happen in our lives but has great positive effect physically and mentally. Analysis on one-line sentences about happiness also avoids randomness.
 
 ### What are they about?
 
@@ -200,6 +201,7 @@ p2 <- ggplot(person_word_count[1:20,],
 ```
 
 ```{r What thing makes us happy,warning=FALSE,message=FALSE,echo=FALSE}
+# Count the noun words,excluded of people and time
 noun_word_count <- sense %>%
   filter(POS=="NOUN"&supersenseLabel!="n.person"&supersenseLabel!="n.time")%>%
   count(lowercaseLemma, sort = TRUE)
@@ -207,7 +209,7 @@ p3 <- ggplot(noun_word_count[1:20,],
        aes(x=reorder(lowercaseLemma,n),y=n))+
   geom_bar(stat = "identity",fill="skyblue")+
   theme_minimal() + coord_flip() +
-  labs(title="What things make us happy?",
+  labs(title="What make us happy?",
        y="frequency",x="word of things") +
   theme(axis.text.x = element_blank(),
         panel.grid=element_blank(),
@@ -220,7 +222,7 @@ grid.arrange(p1, p2, p3, ncol=3)
 
 ## Sentiment Analysis
 
-##### Sentiment score of different types of people
+### Sentiment score of different types of people
 
 I calculated the average sentiment score by their gender, marital and parenthood status. Surprisingly, single dads have the highest postivity score. Another interesting fact is that for female, married women have similar or slight higher positivity score with unmarried women. However, the scenerio is opposite for male. Perhaps it is because women enjoy marriage more than men.
 
@@ -246,7 +248,7 @@ ggplot(sentiments_by_demo, aes(x=marital,y=score,fill=parenthood)) +
 ```
 
 
-##### Sentiment score of each category
+### Sentiment score of each category
 
 I also calculate the average sentiment score of different categories. Though not so much entries of happy moments are about nature, nature has the highest positivity score among all categories. Because there are more **nice** words when describing the nature, such as beautiful, warm and so on. We will see that in a moment.
 
@@ -264,7 +266,7 @@ sentiments_by_category <- words_by_category %>%
 sentiments_by_category %>%
   mutate(category = reorder(predicted_category, score)) %>%
   ggplot(aes(category, score)) +
-  geom_col(show.legend = FALSE,fill="lightblue") +
+  geom_col(fill="lightblue",width = 0.8) +
   coord_flip() +
   theme_bw() +
   theme(plot.title=element_text(size=15, face = "bold")) +
@@ -272,7 +274,7 @@ sentiments_by_category %>%
        title="Average Sentiment Score by Category")
 ```
 
-##### What words have the most effect on sentiment scores overall?
+### What words have the most effect on sentiment scores overall?
 
 Here I analyze the contribution (sentiment score weighted by occurrences) of each words and select the top 20 words.
 
@@ -288,14 +290,14 @@ sentiments_by_word %>%
   mutate(word = reorder(word, contribution)) %>%
   ggplot(aes(word, contribution, fill = contribution > 0)) +
   scale_fill_brewer() +
-  geom_col(show.legend = FALSE) +
+  geom_col(show.legend = FALSE,width = 0.8) +
   coord_flip() +
   theme_bw() +
   theme(plot.title=element_text(size=15, face = "bold"))+
   labs(title="Words with most effect on sentiment score")
 ```
 
-##### What word havs the most effect on sentiment scores within each category
+### What word havs the most effect on sentiment scores within each category
 
 After analyzing the overall contribution of each word, now I evaluate their contribution within each category. **love** appears in almost every category, and it makes sense.
 
@@ -310,9 +312,10 @@ top_sentiment_words %>%
   ungroup() %>%
   mutate(word=reorder(paste(word,predicted_category,sep = "__"), contribution)) %>%
   ggplot(aes(word, contribution, fill = contribution > 0)) +
-  geom_col(show.legend = FALSE) +
+  geom_col(show.legend = FALSE,width = 0.8) +
   scale_x_discrete(labels = function(x) gsub("__.+$", "", x)) +
   facet_wrap(~ predicted_category, scales = "free", nrow = 4) +
+  scale_fill_brewer() +
   coord_flip() +
   theme_bw() +
   theme(plot.title=element_text(size=15, face = "bold")) +
@@ -326,7 +329,7 @@ top_sentiment_words %>%
 
 ### What is my favorite?
 
-Here I count top ten words preceded by word *favorite/favourite*. Interestingly, SEVEN of them, including the top ones, are about eating. Those words are *restaurant*, *food*, *meal*, *dish*, *snack*, *sweet*, *dinner*. Apparently, Eating is so happy! 
+Here I count top ten words proceded by word *favorite/favourite*. Interestingly, SEVEN of them, including the top ones, are about eating. Those words are *restaurant*, *food*, *meal*, *dish*, *snack*, *sweet*, *dinner*. Apparently, Eating is so happy! 
 
 ```{r,echo=FALSE}
 #bigram analysis
@@ -349,10 +352,10 @@ bigram_counts %>%
   ungroup() %>%
   mutate(word2 = reorder(paste(word2, word1, sep = "__"), nn)) %>%
   ggplot(aes(word2, nn)) +
-  geom_col(show.legend = FALSE,fill="orange") +
+  geom_col(fill="orange",width=0.8) +
   facet_wrap(~ word1, scales = "free", nrow = 1) +
   scale_x_discrete(labels = function(x) gsub("__.+$", "", x)) +
-  labs(x="Words preceded by favorite",
+  labs(x="Words proceded by favorite",
        y="Number of occurrences",
        title="My favorite is ...") +
   theme_bw() +
@@ -393,21 +396,108 @@ I also noted that among these food, the only one that is more authentic is Sushi
 sense.food <- food.df %>% select("hmid") %>% left_join(sense,by="hmid")
 food_word_count <- sense %>%
   filter(supersenseLabel=="n.food"&
-           (!lowercaseLemma%in%c("food","dinner","lunch","breakfast","drink")))%>%
+           # remove some general words
+           (!lowercaseLemma%in%c("food","dinner","lunch","breakfast","drink"))) %>%
   count(lowercaseLemma, sort = TRUE)
 # Top 20 words about food
-ggplot(food_word_count[1:20,], 
-       aes(x=reorder(lowercaseLemma,n),y=n))+
-  geom_bar(stat = "identity",fill="Orange")+
-  theme_minimal() + coord_flip() +
-  theme(axis.text.x=element_blank(),
-        axis.title.x=element_blank(),
-        axis.title.y=element_blank(),
-        panel.grid = element_blank(),
+food_word_count %>% top_n(20,n) %>%
+  ggplot( aes(x=reorder(lowercaseLemma,n),y=n))+
+  geom_bar(stat = "identity",fill="Orange",width=0.8)+
+  theme_bw() + coord_flip() +
+  theme(panel.grid = element_blank(),
         plot.title=element_text(size=15, face = "bold")) +
   labs(title="What food or drinks makes you happy?",
        x="food/drinks",y="frequency")
 ```
+
+### Wake up with coffee in the morning
+
+Looking at the happy moments that mentioned about coffe, the most frequent word is **morning**. Other frequently mentioned words like **woke** and **breakfast** also indicate that drinking a cup of coffee in the morning can make you happy.
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+coffee <- food.df %>% filter(grepl("coffee",text))
+
+word_count_coffee <- coffee %>% unnest_tokens(word, text) %>%
+  count(word, sort = TRUE)
+
+# word_count_coffee[-1,] %>% top_n(20,n) %>%
+#   ggplot(aes(x=reorder(word,n),y=n))+
+#   geom_bar(stat = "identity",fill="Orange",width = 0.8)+
+#   theme_minimal() + coord_flip() +
+#   theme(axis.text.x=element_blank(),
+#         axis.title.x=element_blank(),
+#         axis.title.y=element_blank(),
+#         panel.grid = element_blank(),
+#         plot.title=element_text(size=15, face = "bold")) +
+#   labs(title="Most frequent words about coffee",
+#        x="words",y="frequency")
+word_count_coffee[-1,] %>% top_n(20,n) %>%
+ggplot(aes(x=n, y=reorder(word,n))) + 
+  geom_point(size=2,color="Orange",show.legend = FALSE) +
+  theme_bw() +
+  theme(panel.grid.major.x = element_blank(),
+      panel.grid.minor.x = element_blank(),
+      panel.grid.major.y = element_line(colour="grey80",linetype="dashed"),
+      plot.title=element_text(size=15, face = "bold")) +
+  labs(title="Most frequent words about coffee",y="words",x="frequency")
+  
+```
+
+### What kind of pizza do you like?
+
+I filter out those words preceded by word "pizza", most of them are adjectives of what kind of pizza they eat. From the graph, we can see that **free** pizza is mentioned the most. Everyone loves free food. The second and third ranked adjectives are **delicious** and **homemade**. It looks like if eating outside, free pizza is the best, else if eating at home, homemade pizza is the best. Both way is good for saving money. There are also some flavors that people can find happiness with. **Pepperoni** beats **Cheese** pizza.
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+pizza <- food.df %>% filter(grepl("pizza",text))
+#bigram analysis
+bigrams.pizza <- pizza %>% filter(count!=1) %>%
+  unnest_tokens(bigram, text, token = "ngrams", n = 2)
+#count bigram frequency
+bigram_counts <- bigrams %>%
+  count(predicted_category, bigram, sort = TRUE) %>%
+  ungroup() %>%
+  separate(bigram, c("word1", "word2"), sep = " ")
+# top 10 words before "pizza"
+bigram_counts %>%
+  # filter words preceded by pizza 
+  # remove "eat" which is natually ranked first but does not help here
+  filter(word2=="pizza"&word1!="ate"&word1!="eat") %>%
+  count(word1, word2, wt = n, sort = TRUE) %>%
+  group_by(word2) %>%
+  top_n(20, nn) %>%
+  ungroup() %>%
+  mutate(word1 = reorder(paste(word1, word2, sep = "__"), nn)) %>%
+  ggplot(aes(word1, nn)) +
+  geom_point(show.legend = FALSE, size=2,color="Orange") +
+  #geom_col(show.legend = FALSE,fill="orange",width = 0.8) +
+  scale_x_discrete(labels = function(x) gsub("__.+$", "", x)) +
+  labs(x="Words before pizza",
+       y="Number of occurrences",
+       title="what pizza do we like?") +
+  theme_bw() + coord_flip() +
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_line(colour="grey80",linetype="dashed"),
+        plot.title=element_text(size=15, face = "bold"))
+```
+
+
+## Conclusion: 
+
+From my analysis, I come up with plan of the happiest day including some important keywords to happiness.
+
+**The Happiest Day**
+
+| Time   |  Activity                                |
+|--------|------------------------------------------|
+|8:00 AM |  Wake up with a cup of coffee            |
+|9:00 AM |  Work,work,work...                       |
+|12:00 PM| Have a pepperoni pizza with your friends |
+|16:00 PM| Pick up kid from school                  |
+|19:00 PM|Have a dinner with family                 |
+|23:00 PM|Kiss your wife/husband and kid good night |
+
+
 
 ## Future Analysis
 

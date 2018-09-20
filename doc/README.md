@@ -10,7 +10,7 @@
 
 * What things appear? 
 
-* What are people most like to talk about when they think of happiness?
+* What are people most likely to talk about when they think of happiness?
 
 * Which topic has a highest positivity score?
 
