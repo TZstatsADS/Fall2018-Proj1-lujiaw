@@ -78,7 +78,6 @@ Most happy moments is only in one sentence. Simple but powerful, isn't it?
 
 However, A few happy memory is a long story and we need more words to express our feelings. Young people, especially male around age of 25, like to write extra long paragraphs describing their happy moments.
 
-*
 
 ```{r,warning=FALSE, message=FALSE,echo=FALSE}
 # There are some outliers in the data set. Someone copied a story and had multiple same entries. remove these answers from the data set.
@@ -152,7 +151,7 @@ ggplot(aes(x=reorder(word,n),y=n))+
 #wordcloud2(word_count,ellipticity = 0.1,size=0.6,color = "random-light")
 ```
 
-Now, I want oanalyze frequencies of words at different positions in a sentence.
+Now, I want to analyze frequencies of words at different positions in a sentence.
 
   + Happiness begins with...?
 
@@ -250,7 +249,7 @@ ggplot(sentiments_by_demo, aes(x=marital,y=score,fill=parenthood)) +
 
 ### Sentiment score of each category
 
-I also calculate the average sentiment score of different categories. Though not so much entries of happy moments are about nature, nature has the highest positivity score among all categories. Because there are more **nice** words when describing the nature, such as beautiful, warm and so on. We will see that in a moment.
+I also calculate the average sentiment score of different category. Though not so much entries of happy moments are about nature, nature has the highest positivity score among all categories. Because there are more **nice** words when describing the nature, such as beautiful, warm and so on. We will see that in a moment.
 
 
 ```{r,message=FALSE,warning=FALSE,echo=FALSE}
@@ -276,7 +275,7 @@ sentiments_by_category %>%
 
 ### What words have the most effect on sentiment scores overall?
 
-Here I analyze the contribution (sentiment score weighted by occurrences) of each words and select the top 20 words.
+Here I analyze the contribution (sentiment score weighted by occurrences) of each words and select the top 20 ones.
 
 ```{r,message=FALSE,warning=FALSE,echo=FALSE}
 sentiments_by_word <- bagOfWords %>%
@@ -388,7 +387,7 @@ Here are most frequent words about food and drinks in the set. **Coffee** and **
 
 Next time, if you are unhappy, maybe you are just hungry. Order a pizza and invite your friend to share it with you, everything will be okay :) 
 
-I also noted that among these food, the only one that is more authentic is Sushi. Maybe that's reason why sushi is so polular worldwide.
+I also noted that among these food, the only one that is more authentic is Sushi. Maybe that's reason why Sushi is so polular worldwide.
 
 
 ```{r,echo=FALSE,message=FALSE,warning=FALSE}
@@ -484,7 +483,7 @@ bigram_counts %>%
 
 ## Conclusion: 
 
-From my analysis, I come up with plan of the happiest day including some important keywords to happiness.
+From my analysis, I come up with a plan of having the happiest day including some important keywords to happiness.
 
 **The Happiest Day**
 
@@ -507,5 +506,5 @@ Some future anaysis I can think of right now is
 
 + Differences between happy memories reflected from short term and long term.
 
-+ Based on different segmentatio of people, analyze what activities they like to do.
++ Based on different segmentation of people, analyze what activities they like to do.
 
